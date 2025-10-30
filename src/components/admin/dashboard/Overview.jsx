@@ -24,7 +24,7 @@ const Overview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await API.get(`/identity/users`);
+        const response = await API.get(`/users`);
         setUserList(response.data?.data || []);
         console.log("Fetched users:", response);
       } catch (error) {
@@ -40,7 +40,7 @@ const Overview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await API.get(`/identity/resources`);
+        const response = await API.get(`/resources`);
         console.log("API Response:", response); // sẽ ra mảng 9 item
         setResources(response.data?.data || []);
       } catch (error) {

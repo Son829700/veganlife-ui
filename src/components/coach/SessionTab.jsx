@@ -39,7 +39,7 @@ const SessionTab = () => {
     if (!user?.userID) return;
 
     const fetchData = async () => {
-      const url = `/identity/availability/available-slots?userID=${user.userID}`;
+      const url = `/availability/available-slots?userID=${user.userID}`;
       try {
         const data = await API.get(url);
 
@@ -91,14 +91,14 @@ const SessionTab = () => {
       const payload = { availabilityDatetime };
 
       // 🟢 Gọi POST bằng axios instance
-      const result = await API.post("/identity/availability", payload);
+      const result = await API.post("/availability", payload);
       // console.log("Kết quả API:", result.data);
 
       toast.success("Lưu lịch rảnh thành công!");
       setSelectedSlots([]);
 
       // 🟢 Gọi GET lại danh sách lịch sau khi lưu
-      const { data } = await API.get(`/identity/availability/available-slots`, {
+      const { data } = await API.get(`/availability/available-slots`, {
         params: { userID: user.userID },
       });
 

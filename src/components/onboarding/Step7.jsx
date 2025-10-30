@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Step7({ onPrevious }) {
 
-  const API_GOOGLE_LOGIN_URL = `${import.meta.env.VITE_API_URL}/identity/oauth2/authorization/google`;
+  const API_GOOGLE_LOGIN_URL = `${import.meta.env.VITE_API_URL}/oauth2/authorization/google`;
 
   const handleGoogleLogin = () => {
     window.location.href = API_GOOGLE_LOGIN_URL;

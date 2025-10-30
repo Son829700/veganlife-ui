@@ -6,7 +6,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import useFetch from "../../hooks/useFetch";
 import API from "../../api";
 
-const SOCKET_URL = `${import.meta.env.VITE_API_URL}/identity/chat-websocket`;
+const SOCKET_URL = `${import.meta.env.VITE_API_URL}/chat-websocket`;
 
 export default function MessagesTabCoach() {
     const { user } = useAuthContext();
@@ -45,10 +45,8 @@ export default function MessagesTabCoach() {
         if (!user?.userID) return;
 
         const fetchStudents = async () => {
-            console.log("📡 Fetching students for coach:", user.userID);
             try {
-                const res = await API.get(`/identity/users/coach_user/${user.userID}`);
-                console.log("✅ Students loaded:", res);
+                const res = await API.get(`/users/coach_user/${user.userID}`);
                 setStudents(res.data?.data || []);
             } catch (err) {
                 console.error("❌ Lỗi tải học viên:", err);
@@ -62,14 +60,12 @@ export default function MessagesTabCoach() {
     useEffect(() => {
         if (!user?.userID) return;
 
-        console.log("🔌 Connecting WebSocket for:", user.userID);
         const socket = new SockJS(`${SOCKET_URL}?userID=${user.userID}`);
         const client = Stomp.over(socket);
         client.debug = (str) => console.log("STOMP DEBUG:", str);
         client.reconnectDelay = 5000;
 
         client.connect({}, () => {
-            console.log("✅ Connected as", user.userID);
             setConnected(true);
 
             // Nhận tin nhắn từ server
@@ -93,7 +89,6 @@ export default function MessagesTabCoach() {
                                     : s
                             )
                         );
-                        console.log("🔴 Gắn cờ tin nhắn mới cho:", data.senderId);
                         return;
                     }
 
@@ -117,7 +112,6 @@ export default function MessagesTabCoach() {
         clientRef.current = client;
 
         return () => {
-            console.log("🧹 Disconnecting WebSocket...");
             client.deactivate();
         };
     }, [user?.userID]);
@@ -133,12 +127,12 @@ export default function MessagesTabCoach() {
             e.preventDefault();
             const stompClient = clientRef.current;
 
-            console.log("🧩 Trying to send message:", {
-                from: user?.userID,
-                to: selectedUser?.userID,
-                text: message,
-                connected: stompClient?.connected,
-            });
+            // console.log("🧩 Trying to send message:", {
+            //     from: user?.userID,
+            //     to: selectedUser?.userID,
+            //     text: message,
+            //     connected: stompClient?.connected,
+            // });
 
             if (!selectedUser) {
                 console.warn("⚠️ No student selected!");
@@ -165,7 +159,6 @@ export default function MessagesTabCoach() {
 
 
             stompClient.send("/app/chat.sendPrivate", {}, JSON.stringify(chatMessage));
-            console.log("📤 Sent message to server:", chatMessage);
 
             // ❌ Không thêm vào UI
             setMessage("");
@@ -178,11 +171,9 @@ export default function MessagesTabCoach() {
 
         const fetchChatHistory = async () => {
             try {
-                console.log("📜 Fetching chat history for:", selectedUser.userID);
                 const res = await API.get(
-                    `/identity/chat/history?userID1=${user.userID}&userID2=${selectedUser.userID}`
+                    `/chat/history?userID1=${user.userID}&userID2=${selectedUser.userID}`
                 );
-                console.log("📜 History response:", res);
                 if (res) {
                     setMessages(res.data.data.map(normalizeMessage));
 
@@ -225,7 +216,6 @@ export default function MessagesTabCoach() {
                             <button
                                 key={s.userID}
                                 onClick={() => {
-                                    console.log("👤 Selected student:", s);
                                     setSelectedUser(s);
 
                                     // 🔵 Xóa cờ khi mở chat

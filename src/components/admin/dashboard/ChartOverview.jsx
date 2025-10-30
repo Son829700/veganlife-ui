@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useFetch from "../../../hooks/useFetch";
+import API from "../../../api";
 import {
   LineChart,
   Line,
@@ -20,8 +21,8 @@ const ChartOverview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await get(`http://localhost:8080/identity/users`);
-        setUserList(response);
+        const response = await API.get(`/users`);
+        setUserList(response.data.data || []);
         console.log("Fetched users:", response);
       } catch (error) {
         console.error("Fetch error in ChartOverview:", error);

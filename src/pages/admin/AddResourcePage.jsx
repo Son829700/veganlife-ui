@@ -42,7 +42,7 @@ const AddResourcePage = () => {
         setLoading(true);
 
         try {
-            await API.post("/identity/resources", formData);
+            await API.post("/resources", formData);
             toast.success("Lưu tài nguyên thành công!");
             // reset form nếu cần
             setFormData({

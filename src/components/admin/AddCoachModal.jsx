@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import useFetch from '../../hooks/useFetch';
+import API from '../../api';
 
 const AddCoachModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -54,7 +55,7 @@ const AddCoachModal = ({ isOpen, onClose, onSuccess }) => {
     }
 
     try {
-      await post(formData, {}, 'http://localhost:8080/identity/users/coach');
+      await API.post(formData, {}, '/users/coach');
       
       // Reset form
       setFormData({

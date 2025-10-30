@@ -38,7 +38,7 @@ const CTASection = () => {
       const subject = encodeURIComponent("Chào mừng bạn đến với Vegan Life!");
      
 
-      const url = `/identity/email/sendToEmail/${email}/subject/${subject}`;
+      const url = `/email/sendToEmail/${email}/subject/${subject}`;
 
       await API.post(url);
 

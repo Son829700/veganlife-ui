@@ -73,7 +73,7 @@ const CoachingList = ({ selectedCoachId, setSelectedCoachId }) => {
         const fetchData = async () => {
             try {
                 const res = await API.get(
-                    `/identity/users/role/COACH`
+                    `/users/role/COACH`
                 );
                const response = res?.data?.data || res?.data || [];
 

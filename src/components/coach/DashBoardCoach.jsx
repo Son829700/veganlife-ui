@@ -15,8 +15,7 @@ const DashBoardCoach = () => {
     const fetchUserManaged = async () => {
       if (!user?.userID) return;
       try {
-        const res = await API.get(`/identity/users/coach_user/${user.userID}`);
-        console.log(res);
+        const res = await API.get(`/users/coach_user/${user.userID}`);
         const count = res?.data?.data.length || 0;
         setUserManaged(count);
       }
@@ -46,7 +45,7 @@ const DashBoardCoach = () => {
     setLoading(true);
     try {
       const res = await API.get(
-        `/identity/appointment/coach-appointments/${user.userID}`
+        `/appointment/coach-appointments/${user.userID}`
       );
 
       const data = res?.data?.data || res?.data || [];

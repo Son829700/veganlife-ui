@@ -12,7 +12,7 @@ export default function ReadingPage() {
   useEffect(() => {
     const fetchResource = async () => {
       try {
-        const res = await API.get(`identity/resources/${id}`);
+        const res = await API.get(`/resources/${id}`);
         setResource(res.data.data);
       } catch (err) {
         console.error("Error fetching resource:", err);

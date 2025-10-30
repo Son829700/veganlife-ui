@@ -23,7 +23,7 @@ const ChatAI = () => {
 
     try {
       const res = await API.get(
-        `/identity/ask-ai?prompt=${encodeURIComponent(input)}`
+        `/ask-ai?prompt=${encodeURIComponent(input)}`
       );
       const data = res.data; // 👈 Nếu backend trả về text, axios tự parse
       const botMsg = { role: "ai", text: data };

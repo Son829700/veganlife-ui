@@ -40,7 +40,7 @@ const ManageUserPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await API.get(`/identity/users`);
+        const response = await API.get(`/users`);
         setUserList(response?.data?.data);
       } catch (error) {
         console.error("Fetch error in ResourcePage:", error);

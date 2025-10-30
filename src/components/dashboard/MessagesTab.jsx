@@ -6,7 +6,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import useFetch from "../../hooks/useFetch";
 import API from "../../api";
 
-const SOCKET_URL = `${import.meta.env.VITE_API_URL}/identity/chat-websocket`;
+const SOCKET_URL = `${import.meta.env.VITE_API_URL}/chat-websocket`;
 
 export default function MessagesTabUser() {
   const { user } = useAuthContext();
@@ -41,7 +41,7 @@ export default function MessagesTabUser() {
     const fetchChatHistory = async () => {
       try {
         const res = await API.get(
-          `/identity/chat/history?userID1=${user.userID}&userID2=${coach.userID}`
+          `/chat/history?userID1=${user.userID}&userID2=${coach.userID}`
         );
         if (res) {
           setMessages(res.data.data.map(normalizeMessage));

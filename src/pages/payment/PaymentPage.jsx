@@ -32,7 +32,7 @@ export default function PaymentPage() {
                     accountNumber: "32195877",
                     amount: state.amount,
                 };
-                const apiUrl = `/identity/sepay/qr/userID/${user.userID}/coachID/${state.coachId}`;
+                const apiUrl = `/sepay/qr/userID/${user.userID}/coachID/${state.coachId}`;
                 const { data } = await API.post(apiUrl, body);
 
                 if (data?.qrUrl) setQrUrl(data.qrUrl);
@@ -52,7 +52,7 @@ export default function PaymentPage() {
     useEffect(() => {
         if (!user?.userID || !state?.coachId || paymentStatus !== "pending") return;
 
-        const checkUrl = `/identity/sepay/status/userID/${user.userID}/coachID/${state.coachId}`;
+        const checkUrl = `/sepay/status/userID/${user.userID}/coachID/${state.coachId}`;
 
         intervalRef.current = setInterval(async () => {
             try {

@@ -13,7 +13,7 @@ export const useAuth = () => {
         setAuthLoading(true);
         setError(null);
         try {
-            const response = await API.post("/identity/auth/token", {
+            const response = await API.post("/auth/token", {
                 username,
                 password,
             });
@@ -73,7 +73,7 @@ export const useAuth = () => {
 
     const fetchUser = useCallback(async () => {
         try {
-            const res = await API.get("/identity/users/my-info");
+            const res = await API.get("/users/my-info");
             setUser(res.data.data);
             return res.data.data;
         } catch (error) {

@@ -31,7 +31,7 @@ export default function ResourcePage() {
     const fetchData = async () => {
       try {
 
-         const response = await API.get("/identity/resources");
+         const response = await API.get("/resources");
         setResources(response.data.data); // ✅ response đã là array
       } catch (error) {
         console.error("Fetch error in ResourcePage:", error);

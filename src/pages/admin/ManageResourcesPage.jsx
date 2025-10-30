@@ -48,7 +48,7 @@ const ManageResourcesPage = () => {
   const [categoryFilter, setCategoryFilter] = useState("Tất cả");
   const fetchResources = async () => {
     try {
-      const res = await API.get("/identity/resources");
+      const res = await API.get("/resources");
 
       const data = res?.data?.data; 
 
@@ -94,7 +94,7 @@ const ManageResourcesPage = () => {
     if (!confirmed) return;
 
     try {
-      await API.delete(`/identity/resources/${id}`);
+      await API.delete(`/resources/${id}`);
       toast.success("Đã xoá tài nguyên thành công!");
       fetchResources();
     } catch (err) {

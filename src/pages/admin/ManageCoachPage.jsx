@@ -15,7 +15,7 @@ const ManageCoachPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await API.get(`/identity/users`);
+        const response = await API.get(`/users`);
         console.log(response);
         setUserList(response?.data?.data);
       } catch (error) {
@@ -29,7 +29,7 @@ const ManageCoachPage = () => {
     setIsModalOpen(false);
     toast.success("Thêm huấn luyện viên thành công!");
     try {
-      const response = await API.get(`/identity/users`);
+      const response = await API.get(`/users`);
       setUserList(response?.data?.data);
     } catch (error) {
       console.error("Fetch error in ManageCoachPage:", error);

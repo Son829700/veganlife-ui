@@ -43,7 +43,7 @@ export default function ScheduleTab() {
   const fetchCoachAvailabilities = async () => {
     if (!coachID) return;
     try {
-      const res = await API.get(`/identity/availability/available-slots?userID=${coachID}`);
+      const res = await API.get(`/availability/available-slots?userID=${coachID}`);
       const slots = res?.data?.data || res?.data || [];
       const now = dayjs();
 
@@ -74,7 +74,7 @@ export default function ScheduleTab() {
     if (!user?.userID) return;
     setLoading(true);
     try {
-      const res = await API.get(`/identity/appointment/my-appointments/${user.userID}`);
+      const res = await API.get(`/appointment/my-appointments/${user.userID}`);
       const data = res?.data?.data || res?.data || [];
       const now = dayjs();
 
@@ -114,7 +114,7 @@ export default function ScheduleTab() {
         googleAccessToken,
       };
 
-      await API.post("/identity/appointment", payload);
+      await API.post("/appointment", payload);
 
       toast.success("Đặt lịch thành công!");
       setOpenModal(false);
@@ -144,7 +144,7 @@ export default function ScheduleTab() {
         return;
       }
 
-      const res = await API.delete(`/identity/appointment/${appointmentID}/google/${googleAccessToken}`);
+      const res = await API.delete(`/appointment/${appointmentID}/google/${googleAccessToken}`);
 
       if (res.status === 200) {
         toast.success("Hủy buổi hẹn thành công!");
