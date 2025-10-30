@@ -4,8 +4,9 @@ import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { useAuthContext } from "../../context/AuthContext";
 import useFetch from "../../hooks/useFetch";
+import API from "../../api";
 
-const SOCKET_URL = "http://localhost:8080/identity/chat-websocket";
+const SOCKET_URL = `${import.meta.env.VITE_API_URL}/identity/chat-websocket`;
 
 export default function MessagesTabUser() {
   const { user } = useAuthContext();
@@ -39,13 +40,11 @@ export default function MessagesTabUser() {
     if (!user?.userID || !coach?.userID) return;
     const fetchChatHistory = async () => {
       try {
-        console.log("📜 Fetching chat history for:", coach.userID);
-        const res = await get(
-          `http://localhost:8080/identity/chat/history?userID1=${user.userID}&userID2=${coach.userID}`
+        const res = await API.get(
+          `/identity/chat/history?userID1=${user.userID}&userID2=${coach.userID}`
         );
-        console.log("📜 History:", res);
         if (res) {
-          setMessages(res.map(normalizeMessage));
+          setMessages(res.data.data.map(normalizeMessage));
         }
       } catch (err) {
         console.error("❌ Lỗi tải lịch sử chat:", err);
@@ -58,14 +57,12 @@ export default function MessagesTabUser() {
   useEffect(() => {
     if (!user?.userID) return;
 
-    console.log("🚀 Connecting WebSocket for user:", user.userID);
     const client = Stomp.over(() => new SockJS(`${SOCKET_URL}?userID=${user.userID}`));
 
     client.reconnectDelay = 5000;
     client.debug = (str) => console.log("🧩 STOMP:", str);
 
     client.connect({ userID: user.userID }, () => {
-      console.log("✅ Connected to WebSocket");
       setConnected(true);
 
       client.subscribe("/user/queue/messages", (msg) => {
@@ -89,7 +86,7 @@ export default function MessagesTabUser() {
             });
           }
         } catch (error) {
-          console.error("❌ Error parsing message:", error);
+          console.error(" Error parsing message:", error);
         }
       });
     });
@@ -97,7 +94,7 @@ export default function MessagesTabUser() {
     clientRef.current = client;
 
     return () => {
-      console.log("❌ Disconnecting WebSocket");
+      console.log(" Disconnecting WebSocket");
       client.deactivate();
     };
   }, [user?.userID, coach?.userID]);
@@ -128,7 +125,6 @@ export default function MessagesTabUser() {
     };
 
     stompClient.send("/app/chat.sendPrivate", {}, JSON.stringify(chatMessage));
-    console.log("📤 Sent message:", chatMessage);
     setMessage("");
   };
 

@@ -3,6 +3,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../context/AuthContext";
 import dayjs from "dayjs";
+import API from "../../api";
+import { CloudSnow } from "lucide-react";
 
 const DashBoardCoach = () => {
   const { user } = useAuthContext();
@@ -13,8 +15,8 @@ const DashBoardCoach = () => {
     const fetchUserManaged = async () => {
       if (!user?.userID) return;
       try {
-        const res = await axios.get(`http://localhost:8080/identity/users/coach_user/${user.userID}`);
-
+        const res = await API.get(`/identity/users/coach_user/${user.userID}`);
+        console.log(res);
         const count = res?.data?.data.length || 0;
         setUserManaged(count);
       }
@@ -43,8 +45,8 @@ const DashBoardCoach = () => {
     if (!user?.userID) return;
     setLoading(true);
     try {
-      const res = await axios.get(
-        `http://localhost:8080/identity/appointment/coach-appointments/${user.userID}`
+      const res = await API.get(
+        `/identity/appointment/coach-appointments/${user.userID}`
       );
 
       const data = res?.data?.data || res?.data || [];

@@ -2,8 +2,8 @@ import React from "react";
 
 export default function Step7({ onPrevious }) {
 
-  const API_GOOGLE_LOGIN_URL =
-    "http://localhost:8080/identity/oauth2/authorization/google";
+  const API_GOOGLE_LOGIN_URL = `${import.meta.env.VITE_API_URL}/identity/oauth2/authorization/google`;
+
   const handleGoogleLogin = () => {
     window.location.href = API_GOOGLE_LOGIN_URL;
   };
@@ -64,7 +64,7 @@ export default function Step7({ onPrevious }) {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               className="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center group"
-             href="/coaching"
+              href="/coaching"
             >
               Cá nhân hóa với các huấn luyện viên
               <svg
@@ -89,10 +89,10 @@ export default function Step7({ onPrevious }) {
             >
               Đăng ký với Google
               <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google logo"
-              className="w-5 h-5"
-            />
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="Google logo"
+                className="w-5 h-5"
+              />
             </button>
           </div>
         </div>

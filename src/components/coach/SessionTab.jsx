@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
-import useFetch from "../../hooks/useFetch";
 import { useAuthContext } from "../../context/AuthContext";
 import utc from "dayjs/plugin/utc";
 import { Check } from "lucide-react";
 import { toast } from "react-toastify";
+import API from "../../api";
 
 dayjs.extend(utc);
 
@@ -28,10 +28,9 @@ const SessionTab = () => {
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]); // <-- Thêm state mới
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { user } = useAuthContext();
-  const { post, loading } = useFetch("http://localhost:8080/identity/availability");
-  const { get: getAvailabilities } = useFetch();
 
   const today = dayjs();
 
@@ -40,14 +39,12 @@ const SessionTab = () => {
     if (!user?.userID) return;
 
     const fetchData = async () => {
-      const url = `http://localhost:8080/identity/availability/available-slots?userID=${user.userID}`;
+      const url = `/identity/availability/available-slots?userID=${user.userID}`;
       try {
-        const data = await getAvailabilities(url);
+        const data = await API.get(url);
 
-        console.log("Dữ liệu từ API availability:", data); 
 
-        const datetimes = (data || []).map(item => item.availabilityDatetime);
-        console.log("Danh sách thời gian đã đặt:", datetimes); 
+        const datetimes = (data.data?.data || []).map(item => item.availabilityDatetime);
 
         setBookedSlots(datetimes);
       } catch (error) {
@@ -56,7 +53,7 @@ const SessionTab = () => {
     };
 
     fetchData();
-  }, [user, getAvailabilities]);
+  }, [user]);
 
   const getWeekDays = (offset = 0) => {
     const startOfWeek = dayjs().add(offset, "week").startOf("week");
@@ -92,23 +89,33 @@ const SessionTab = () => {
       });
 
       const payload = { availabilityDatetime };
-      console.log("Payload gửi API:", payload);
 
-      const result = await post(payload);
-      console.log("Kết quả API:", result);
+      // 🟢 Gọi POST bằng axios instance
+      const result = await API.post("/identity/availability", payload);
+      // console.log("Kết quả API:", result.data);
 
       toast.success("Lưu lịch rảnh thành công!");
       setSelectedSlots([]);
 
-      // Refetch lại lịch sau khi lưu thành công
-      const url = `http://localhost:8080/identity/availability/available-slots?userID=${user.userID}`;
-      const data = await getAvailabilities(url);
-      const datetimes = (data || []).map(item => item.availabilityDatetime);
+      // 🟢 Gọi GET lại danh sách lịch sau khi lưu
+      const { data } = await API.get(`/identity/availability/available-slots`, {
+        params: { userID: user.userID },
+      });
+
+      const datetimes = (data?.data || []).map(
+        (item) => item.availabilityDatetime
+      );
+
       setBookedSlots(datetimes);
-      setShowModal(false);
     } catch (error) {
-      console.error("Lỗi khi lưu:", error);
-      alert(`❌ Lưu thất bại: ${error.messageFromServer || error.message}`);
+      console.error("❌ Lỗi khi lưu:", error);
+
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Lưu thất bại, vui lòng thử lại.";
+
+      toast.error(`${message}`);
     } finally {
       setShowModal(false);
     }

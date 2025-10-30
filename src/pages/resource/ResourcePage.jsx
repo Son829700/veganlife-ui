@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
-
+import API from "../../api";
 const categories = ["Tất cả", "Sức khỏe", "Dinh dưỡng", "Công thức", "Tư duy", "Nấu ăn"];
 
 // Hàm chuyển type sang tiếng Việt
@@ -27,23 +27,20 @@ export default function ResourcePage() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Tất cả");
 
-  const { get: getBlogs } = useFetch();
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getBlogs(`http://localhost:8080/identity/resources`);
-        console.log("API Response:", response); // sẽ ra mảng 9 item
-        setResources(response); // ✅ response đã là array
+
+         const response = await API.get("/identity/resources");
+        setResources(response.data.data); // ✅ response đã là array
       } catch (error) {
         console.error("Fetch error in ResourcePage:", error);
       }
     };
 
     fetchData();
-  }, [getBlogs]);
+  }, []);
 
-  console.log(resources);
   // Lọc theo từ khóa và danh mục
   const filteredResources = resources.filter((res) => {
     const matchesSearch = res.resourcesName

@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import useFetch from "../../hooks/useFetch";
-
+import API from "../../api";
 
 
 const ManageUserPage = () => {
@@ -40,9 +40,8 @@ const ManageUserPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await get(`http://localhost:8080/identity/users`);
-        setUserList(response);
-        console.log("Fetched users:", response);
+        const response = await API.get(`/identity/users`);
+        setUserList(response?.data?.data);
       } catch (error) {
         console.error("Fetch error in ResourcePage:", error);
       }

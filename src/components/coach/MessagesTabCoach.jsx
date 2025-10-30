@@ -4,8 +4,9 @@ import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { useAuthContext } from "../../context/AuthContext";
 import useFetch from "../../hooks/useFetch";
+import API from "../../api";
 
-const SOCKET_URL = "http://localhost:8080/identity/chat-websocket";
+const SOCKET_URL = `${import.meta.env.VITE_API_URL}/identity/chat-websocket`;
 
 export default function MessagesTabCoach() {
     const { user } = useAuthContext();
@@ -46,9 +47,9 @@ export default function MessagesTabCoach() {
         const fetchStudents = async () => {
             console.log("📡 Fetching students for coach:", user.userID);
             try {
-                const res = await get(`http://localhost:8080/identity/users/coach_user/${user.userID}`);
+                const res = await API.get(`/identity/users/coach_user/${user.userID}`);
                 console.log("✅ Students loaded:", res);
-                setStudents(res || []);
+                setStudents(res.data?.data || []);
             } catch (err) {
                 console.error("❌ Lỗi tải học viên:", err);
             }
@@ -178,12 +179,12 @@ export default function MessagesTabCoach() {
         const fetchChatHistory = async () => {
             try {
                 console.log("📜 Fetching chat history for:", selectedUser.userID);
-                const res = await get(
-                    `http://localhost:8080/identity/chat/history?userID1=${user.userID}&userID2=${selectedUser.userID}`
+                const res = await API.get(
+                    `/identity/chat/history?userID1=${user.userID}&userID2=${selectedUser.userID}`
                 );
                 console.log("📜 History response:", res);
                 if (res) {
-                    setMessages(res.map(normalizeMessage));
+                    setMessages(res.data.data.map(normalizeMessage));
 
                 } else {
                     console.warn("⚠️ No chat history found!");

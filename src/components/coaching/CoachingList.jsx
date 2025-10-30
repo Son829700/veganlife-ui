@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import useFetch from "../../hooks/useFetch";
-
+import API from "../../api";
 const CoachingList = ({ selectedCoachId, setSelectedCoachId }) => {
     const [coachesData, setCoachesData] = useState([]);
 
-    const { get: getCoaches } = useFetch();
 
     // Danh sách fallback (cứng)
     const fallbackCoaches = [
@@ -74,9 +72,10 @@ const CoachingList = ({ selectedCoachId, setSelectedCoachId }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getCoaches(
-                    `http://localhost:8080/identity/users/role/COACH`
+                const res = await API.get(
+                    `/identity/users/role/COACH`
                 );
+               const response = res?.data?.data || res?.data || [];
 
                 // Nếu response là mảng hợp lệ thì set, không thì fallback
                 if (Array.isArray(response) && response.length > 0) {
@@ -107,7 +106,7 @@ const CoachingList = ({ selectedCoachId, setSelectedCoachId }) => {
             }
         };
         fetchData();
-    }, [getCoaches]);
+    }, []);
 
     // Dùng data từ API nếu có, nếu không thì fallback
     const coaches = coachesData.length > 0 ? coachesData : fallbackCoaches;

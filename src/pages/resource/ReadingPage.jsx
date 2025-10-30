@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 // import { format } from "date-fns";
-// import { vi } from "date-fns/locale";
 import axios from "axios";
+import API from "../../api";
 
 export default function ReadingPage() {
   const { id } = useParams();
@@ -12,7 +12,7 @@ export default function ReadingPage() {
   useEffect(() => {
     const fetchResource = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/identity/resources/${id}`);
+        const res = await API.get(`identity/resources/${id}`);
         setResource(res.data.data);
       } catch (err) {
         console.error("Error fetching resource:", err);

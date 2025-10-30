@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import useFetch from "../../../hooks/useFetch";
+import API from "../../../api";
 
 const Overview = () => {
   const lastUpdated = new Date().toLocaleDateString('vi-VN', {
@@ -13,19 +14,18 @@ const Overview = () => {
 
   const [userList, setUserList] = React.useState([]);
   const { get } = useFetch();
-  const { get: getBlogs } = useFetch();
   const userRoleCount = userList.filter(user => user.role === 'USER').length;
   const userCoachCount = userList.filter(user => user.role === 'COACH').length;
   const [resources, setResources] = React.useState([]);
   const numberBlog = resources.length;
   const userFreeCount = userList.filter(user => user.role === 'USER' && user.plan === 'FREE').length;
   const userPremiumCount = userList.filter(user => user.role === 'USER' && user.plan === 'PREMIUM').length;
-  const revenue  = userPremiumCount * 499000;
+  const revenue = userPremiumCount * 499000;
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await get(`http://localhost:8080/identity/users`);
-        setUserList(response);
+        const response = await API.get(`/identity/users`);
+        setUserList(response.data?.data || []);
         console.log("Fetched users:", response);
       } catch (error) {
         console.error("Fetch error in ResourcePage:", error);
@@ -40,16 +40,24 @@ const Overview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getBlogs(`http://localhost:8080/identity/resources`);
+        const response = await API.get(`/identity/resources`);
         console.log("API Response:", response); // sẽ ra mảng 9 item
-        setResources(response);
+        setResources(response.data?.data || []);
       } catch (error) {
         console.error("Fetch error in ResourcePage:", error);
       }
     };
 
     fetchData();
-  }, [getBlogs]);
+  }, []);
+
+  const formatRevenue = (value) => {
+    if (value >= 1_000_000_000) return (value / 1_000_000_000).toFixed(1) + "B";
+    if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M";
+    if (value >= 1_000) return (value / 1_000).toFixed(1) + "K";
+    return value.toString();
+  };
+
 
   return (
     <div className="space-y-6">
@@ -121,7 +129,9 @@ const Overview = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Tổng doanh thu</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">  {revenue.toLocaleString("vi-VN")} ₫</p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">
+                {formatRevenue(revenue)}
+              </p>
               <div className="flex items-center mt-2">
                 <svg className="h-4 w-4 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path d="M16 7h6v6" />

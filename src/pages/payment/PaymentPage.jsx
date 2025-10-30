@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import useFetch from "../../hooks/useFetch";
 import { useAuthContext } from "../../context/AuthContext";
 import { useRef } from "react";
+import API from "../../api";
 
 
 export default function PaymentPage() {
@@ -17,7 +18,7 @@ export default function PaymentPage() {
     const [countdown, setCountdown] = useState(10);
     const [qrLoading, setQrLoading] = useState(false);
 
-//Tajo max qr
+    // Tạo mã QR
     useEffect(() => {
         if (!state || !user?.userID) {
             navigate("/onboarding");
@@ -31,41 +32,38 @@ export default function PaymentPage() {
                     accountNumber: "32195877",
                     amount: state.amount,
                 };
-                const apiUrl = `http://localhost:8080/identity/sepay/qr/userID/${user.userID}/coachID/${state.coachId}`;
-                const data = await post(body, {}, apiUrl);
+                const apiUrl = `/identity/sepay/qr/userID/${user.userID}/coachID/${state.coachId}`;
+                const { data } = await API.post(apiUrl, body);
 
                 if (data?.qrUrl) setQrUrl(data.qrUrl);
                 else toast.warning("Không nhận được QR từ API!");
             } catch (err) {
                 console.error("QR Error:", err);
                 toast.error("Không thể tạo mã QR, vui lòng thử lại!");
-            }
-            finally {
+            } finally {
                 setQrLoading(false);
             }
         };
 
         fetchQR();
-    }, [state, user, post, navigate]);
+    }, [state, user, navigate]);
+
     // Kiểm tra trạng thái thanh toán
     useEffect(() => {
         if (!user?.userID || !state?.coachId || paymentStatus !== "pending") return;
 
-        const checkUrl = `http://localhost:8080/identity/sepay/status/userID/${user.userID}/coachID/${state.coachId}`;
+        const checkUrl = `/identity/sepay/status/userID/${user.userID}/coachID/${state.coachId}`;
 
         intervalRef.current = setInterval(async () => {
             try {
-                const res = await get(checkUrl);
-                console.log("📦 RES:", res);
+                const { data: res } = await API.get(checkUrl);
 
-                const status = res?.status;
-                console.log("✅ Trạng thái:", status);
+                const status = res?.data?.status;
 
                 if (status === "SUCCESS") {
                     clearInterval(intervalRef.current);
                     setPaymentStatus("success");
                     toast.success("Thanh toán thành công!");
-                    clearInterval(intervalRef.current);
                 } else if (status === "FAILED") {
                     setPaymentStatus("failed");
                     toast.error("Thanh toán thất bại!");
@@ -85,7 +83,6 @@ export default function PaymentPage() {
         const updateUser = async () => {
             try {
                 await fetchUser(); // ✅ gọi từ AuthContext → sẽ tự setUser
-                console.log("✅ Đã cập nhật lại thông tin user từ context.");
             } catch (err) {
                 console.error("❌ Lỗi khi fetch lại user:", err);
             }

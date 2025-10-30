@@ -10,11 +10,10 @@ import {
 } from "lucide-react";
 import ScheduleModal from "../others/ScheduleModal";
 import { useAuthContext } from "../../context/AuthContext";
-import useFetch from "../../hooks/useFetch";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
-import axios from "axios";
+import API from "../../api";
 dayjs.locale("vi");
 
 export default function ScheduleTab() {
@@ -38,15 +37,13 @@ export default function ScheduleTab() {
   const { user } = useAuthContext();
   const coachID = user?.coach?.userID;
   const googleAccessToken = localStorage.getItem("googleToken");
-  const { post } = useFetch("http://localhost:8080/identity/appointment");
+
 
   // 🟢 Lấy danh sách slot trống của coach
   const fetchCoachAvailabilities = async () => {
     if (!coachID) return;
     try {
-      const res = await axios.get(
-        `http://localhost:8080/identity/availability/available-slots?userID=${coachID}`
-      );
+      const res = await API.get(`/identity/availability/available-slots?userID=${coachID}`);
       const slots = res?.data?.data || res?.data || [];
       const now = dayjs();
 
@@ -77,9 +74,7 @@ export default function ScheduleTab() {
     if (!user?.userID) return;
     setLoading(true);
     try {
-      const res = await axios.get(
-        `http://localhost:8080/identity/appointment/my-appointments/${user.userID}`
-      );
+      const res = await API.get(`/identity/appointment/my-appointments/${user.userID}`);
       const data = res?.data?.data || res?.data || [];
       const now = dayjs();
 
@@ -119,10 +114,7 @@ export default function ScheduleTab() {
         googleAccessToken,
       };
 
-      await post(payload, {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      });
+      await API.post("/identity/appointment", payload);
 
       toast.success("Đặt lịch thành công!");
       setOpenModal(false);
@@ -152,9 +144,7 @@ export default function ScheduleTab() {
         return;
       }
 
-      const res = await axios.delete(
-        `http://localhost:8080/identity/appointment/${appointmentID}/google/${googleAccessToken}`
-      );
+      const res = await API.delete(`/identity/appointment/${appointmentID}/google/${googleAccessToken}`);
 
       if (res.status === 200) {
         toast.success("Hủy buổi hẹn thành công!");

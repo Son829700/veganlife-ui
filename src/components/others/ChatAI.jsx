@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import API from "../../api";
 
 const ChatAI = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,13 +22,14 @@ const ChatAI = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `http://localhost:8080/identity/ask-ai?prompt=${encodeURIComponent(input)}`
+      const res = await API.get(
+        `/identity/ask-ai?prompt=${encodeURIComponent(input)}`
       );
-      const data = await res.text(); // 👈 Đúng định dạng bạn đã cấu hình
+      const data = res.data; // 👈 Nếu backend trả về text, axios tự parse
       const botMsg = { role: "ai", text: data };
       setMessages((prev) => [...prev, botMsg]);
     } catch (err) {
+      console.error("❌ Lỗi khi gọi AI:", err);
       setMessages((prev) => [
         ...prev,
         { role: "ai", text: "Có lỗi khi gọi trợ lý AI." },
@@ -36,6 +38,7 @@ const ChatAI = () => {
       setLoading(false);
     }
   };
+
 
 
   return (
@@ -76,14 +79,14 @@ const ChatAI = () => {
               <div
                 key={idx}
                 className={`px-3 py-2 rounded-lg w-fit max-w-[90%] whitespace-pre-wrap ${msg.role === "user"
-                    ? "bg-emerald-100 text-right ml-auto"
-                    : msg.role === "ai"
-                      ? "bg-gray-100"
-                      : "text-gray-500 italic"
+                  ? "bg-emerald-100 text-right ml-auto"
+                  : msg.role === "ai"
+                    ? "bg-gray-100"
+                    : "text-gray-500 italic"
                   }`}
               >
                 {msg.role === "ai" ? (
-                  <ReactMarkdown>{msg.text}</ReactMarkdown> 
+                  <ReactMarkdown>{msg.text}</ReactMarkdown>
                 ) : (
                   msg.text
                 )}

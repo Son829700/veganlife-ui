@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import { toast } from "react-toastify";
+import API from "../../api";
 
 // Convert Type enum → Tiếng Việt
 const convertTypeToVietnamese = (type) => {
@@ -45,12 +46,14 @@ const ManageResourcesPage = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("Tất cả");
   const [categoryFilter, setCategoryFilter] = useState("Tất cả");
-
   const fetchResources = async () => {
     try {
-      const res = await get("http://localhost:8080/identity/resources");
-      if (res && Array.isArray(res)) {
-        const formatted = res.map((item) => ({
+      const res = await API.get("/identity/resources");
+
+      const data = res?.data?.data; 
+
+      if (Array.isArray(data)) {
+        const formatted = data.map((item) => ({
           id: item.resourcesID,
           title: item.resourcesName,
           category: convertTypeToVietnamese(item.resourcesType),
@@ -61,6 +64,8 @@ const ManageResourcesPage = () => {
           raw: item, // lưu lại để gọi API PUT khi cần
         }));
         setResources(formatted);
+      } else {
+        toast.warning("Không có dữ liệu tài nguyên hợp lệ!");
       }
     } catch (err) {
       console.error("Error fetching resources:", err);
@@ -69,6 +74,7 @@ const ManageResourcesPage = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchResources();
@@ -88,12 +94,7 @@ const ManageResourcesPage = () => {
     if (!confirmed) return;
 
     try {
-      await fetch(`http://localhost:8080/identity/resources/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await API.delete(`/identity/resources/${id}`);
       toast.success("Đã xoá tài nguyên thành công!");
       fetchResources();
     } catch (err) {
@@ -103,35 +104,7 @@ const ManageResourcesPage = () => {
   };
 
   // Hàm cập nhật trạng thái bài viết
-  const handleToggleStatus = async (item) => {
-    const currentStatus = item.raw.resourcesStatus;
-    const nextStatus = currentStatus === "DRAFT" ? "PUBLISHED" : "DRAFT";
-
-    try {
-      await put(
-        {
-          resourceName: item.raw.resourcesName,
-          image: item.raw.image,
-          description: item.raw.description,
-          content: item.raw.content,
-          resourcesType: item.raw.resourcesType,
-          resourcesStatus: nextStatus,
-        },
-        {},
-        `http://localhost:8080/identity/resources/s`
-      );
-
-      toast.success(
-        nextStatus === "PUBLISHED"
-          ? "Đã xuất bản bài viết!"
-          : "Đã chuyển bài viết về nháp!"
-      );
-      fetchResources();
-    } catch (err) {
-      console.error(err);
-      toast.error("Cập nhật trạng thái thất bại!");
-    }
-  };
+  
 
   return (
     <div className="p-6 space-y-6">
@@ -211,7 +184,6 @@ const ManageResourcesPage = () => {
               key={item.id}
               {...item}
               onDelete={() => handleDelete(item.id)}
-              onToggleStatus={() => handleToggleStatus(item)}
             />
           ))
         )}
@@ -225,7 +197,7 @@ const ManageResourcesPage = () => {
 };
 
 // Item component
-const ResourceItem = ({ title, status, category, author, date, excerpt, onDelete, onToggleStatus }) => {
+const ResourceItem = ({ title, status, category, author, date, excerpt, onDelete }) => {
   const statusColors = {
     Nháp: "bg-gray-100 text-gray-800",
     "Xuất bản": "bg-green-100 text-green-800",

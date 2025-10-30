@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useFetch from "../../hooks/useFetch";
 import AddCoachModal from "../../components/admin/AddCoachModal";
 import { toast } from "react-toastify";
+import API from "../../api";
 
 const ManageCoachPage = () => {
   const [userList, setUserList] = useState([]);
@@ -14,8 +15,9 @@ const ManageCoachPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await get(`http://localhost:8080/identity/users`);
-        setUserList(response);
+        const response = await API.get(`/identity/users`);
+        console.log(response);
+        setUserList(response?.data?.data);
       } catch (error) {
         console.error("Fetch error in ManageCoachPage:", error);
       }
@@ -27,8 +29,8 @@ const ManageCoachPage = () => {
     setIsModalOpen(false);
     toast.success("Thêm huấn luyện viên thành công!");
     try {
-      const response = await get(`http://localhost:8080/identity/users`);
-      setUserList(response);
+      const response = await API.get(`/identity/users`);
+      setUserList(response?.data?.data);
     } catch (error) {
       console.error("Fetch error in ManageCoachPage:", error);
     }

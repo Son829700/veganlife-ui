@@ -4,6 +4,8 @@ import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LoginModal from "../../pages/login/LoginModal";
+import API from "../../api";
+
 const CTASection = () => {
   const { user } = useAuthContext();
   const [showLogin, setShowLogin] = useState(false);
@@ -36,9 +38,9 @@ const CTASection = () => {
       const subject = encodeURIComponent("Chào mừng bạn đến với Vegan Life!");
      
 
-      const url = `http://localhost:8080/identity/email/sendToEmail/${email}/subject/${subject}`;
+      const url = `/identity/email/sendToEmail/${email}/subject/${subject}`;
 
-      await axios.post(url);
+      await API.post(url);
 
       toast.success("Gửi email thành công! Vui lòng kiểm tra hộp thư của bạn.");
       setEmail("");

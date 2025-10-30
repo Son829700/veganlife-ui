@@ -3,10 +3,12 @@ import { useAuthContext } from "../../context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 
 
-const API_GOOGLE_LOGIN_URL =
-  "http://localhost:8080/identity/oauth2/authorization/google";
+
 
 const LoginModal = ({ onClose }) => {
+
+  const API_GOOGLE_LOGIN_URL = `${import.meta.env.VITE_API_URL}/identity/oauth2/authorization/google`;
+
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
