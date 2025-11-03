@@ -89,7 +89,7 @@ const CoachingList = ({ selectedCoachId, setSelectedCoachId }) => {
                         description:
                             coach.description ||
                             "Huấn luyện viên chuyên môn, hỗ trợ khách hàng.",
-                        hashtags: coach.hashtags || ["#Coaching", "#Support"],
+                        hashtags: coach.hashtags || ["#ThểHình", "#DinhDưỡng", "#VậnĐộngViên"],
                         rating: coach.rating || 4.5,
                         years: coach.years || "3+ năm",
                         clients: coach.clients || "100+ khách hàng",
@@ -140,7 +140,7 @@ const CoachingList = ({ selectedCoachId, setSelectedCoachId }) => {
                                 <div className="relative mb-6">
                                     <div className="w-24 h-24 rounded-full overflow-hidden mx-auto shadow-lg group-hover:shadow-xl transition-shadow duration-300">
                                         <img
-                                            src={coach.image}
+                                            src={"/coach.jpg" || coach.image}
                                             alt={coach.name}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                         />

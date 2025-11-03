@@ -43,7 +43,7 @@ export default function AppRoute() {
           <Route path="coaching-dashboard" element={<CoachingDashboard />} />
           <Route path="community" element={<CommunityPage />} />
           <Route path="onboarding" element={<OnboardingPage />} />
-          <Route path="/resources/:id" element={<ReadingPage />} />\
+          <Route path="/resources/:id" element={<ReadingPage />} />
           <Route path="/oauth2/success" element={<OAuth2RedirectHandler />} />
           <Route path="/payment" element={<PaymentPage />} />
 
